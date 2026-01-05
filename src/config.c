@@ -39,14 +39,18 @@ StrIntMap playerOneIndexMap = {.pairs = {
                                    {"PLAYER_ONE_RIGHT", 5},
 
                                    {"PLAYER_ONE_SEGA_CENTER", 6},
-                                   {"PLAYER_ONE_SEGA_BOTTOM", 7},
-                                   {"PLAYER_ONE_SEGA_TOP", 10}}};
+                                   {"PLAYER_ONE_SEGA_TOP", 7},
+                                   {"PLAYER_ONE_SEGA_BOTTOM", 8}}};
 StrIntMap playerTwoIndexMap = {.pairs = {
-                                   {"PLAYER_Two_START", 0},
+                                   {"PLAYER_TWO_START", 0},
                                    {"PLAYER_TWO_UP", 2},
                                    {"PLAYER_TWO_DOWN", 3},
                                    {"PLAYER_TWO_LEFT", 4},
-                                   {"PLAYER_TWO_RIGHT", 5}}};
+                                   {"PLAYER_TWO_RIGHT", 5},
+
+                                   {"PLAYER_TWO_SEGA_CENTER", 6},
+                                   {"PLAYER_TWO_SEGA_TOP", 7},
+                                   {"PLAYER_TWO_SEGA_BOTTOM", 8}}};
 
 #include <linux/input-event-codes.h>
 StrIntMap keysLookUpMap = {.pairs = {
