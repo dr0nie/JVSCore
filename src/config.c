@@ -97,8 +97,17 @@ int parseConfig(char *filePath, JVSConfig *jvsConfig)
                                 {
                                     printf(" to %s (%d)\n", token, keyValue);
                                     jvsConfig->playerOneKeys[found] = keyValue;
+                                    continue;
                                 }
-                                else
+                                found = get_value(&playerTwoIndexMap, action);
+                                if (found)
+                                {
+                                    printf(" to %s (%d)\n", token, keyValue);
+                                    jvsConfig->playerTwoKeys[found] = keyValue;
+                                    continue;
+                                }
+
+                                if (strcmp(action, "INSERT_COIN") == 0)
                                 {
                                     printf(" to %s (%d)\n", token, keyValue);
                                     jvsConfig->coinKeys[0] = keyValue;
