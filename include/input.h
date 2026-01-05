@@ -27,7 +27,7 @@ static StrIntMap keysLookUpMap = {.pairs = {
                                       {"KEY_ENTER", KEY_ENTER},
                                       {"KEY_SPACE", KEY_SPACE},
                                       {"KEY_U", KEY_U},
-                                      {"KEY_I", KEY_I},
+                                      {"KEY_O", KEY_O},
                                       {"KEY_Q", KEY_Q},
                                       {"KEY_W", KEY_W},
                                       {"KEY_E", KEY_E},
