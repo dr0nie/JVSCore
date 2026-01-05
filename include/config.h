@@ -27,6 +27,10 @@ typedef struct
 
 int get_value(StrIntMap *map, char *key);
 
+/* Reserve spaces for coin buttons at the start of the mapping */
+#define COIN_KEYS 5
+#define SYSTEM_KEYS 8
+
 typedef struct JVSConfig
 {
     char devicePath[MAX_STRING_LENGTH];
@@ -35,7 +39,8 @@ typedef struct JVSConfig
 
     int playerOneKeys[16];
     int playerTwoKeys[16];
-    int coinKeys[3];
+    int coinKeys[COIN_KEYS];
+    int systemKeys[SYSTEM_KEYS];
 
 } JVSConfig;
 

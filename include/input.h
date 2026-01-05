@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 #include "jvs.h"
+void initInputDefaultConfig(JVSConfig *config);
 
 int initInput(JVSConfig *config, JVSCapabilities *sentCapabilities, char *name, int analogueFuzz);
 int closeInput();

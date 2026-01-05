@@ -20,20 +20,33 @@
 
 #include "input.h"
 
-/* Reserve spaces for coin buttons at the start of the mapping */
-#define COIN_KEYS 5
-#define SYSTEM_KEYS 8
-
 JVSCapabilities *capabilities;
 int fd = -1;
 int switchBytes = -1;
 struct uinput_user_dev usetup;
 
 /* Mappings for the key presses */
-int systemKeys[] = {KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2};
+// int systemKeys[] = {KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2};
 // int coinKeys[] = {KEY_5, KEY_6, KEY_6};
 // int playerOneKeys[] = {KEY_1, KEY_9, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFTCTRL, KEY_LEFTALT, KEY_SPACE, KEY_LEFTSHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_V, KEY_V};
 // int playerTwoKeys[] = {KEY_2, KEY_9, KEY_R, KEY_F, KEY_D, KEY_G, KEY_A, KEY_S, KEY_Q, KEY_W, KEY_I, KEY_K, KEY_J, KEY_L, KEY_L, KEY_L};
+
+void initInputDefaultConfig(JVSConfig *config)
+{
+    int systemKeys[] = {KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2};
+    int coinKeys[] = {KEY_5, KEY_6, KEY_6};
+    int playerOneKeys[] = {KEY_1, KEY_9, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFTCTRL, KEY_LEFTALT, KEY_SPACE, KEY_LEFTSHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_V, KEY_V};
+    int playerTwoKeys[] = {KEY_2, KEY_9, KEY_R, KEY_F, KEY_D, KEY_G, KEY_A, KEY_S, KEY_Q, KEY_W, KEY_I, KEY_K, KEY_J, KEY_L, KEY_L, KEY_L};
+
+    for (int i = 0; i < SYSTEM_KEYS; i++)
+        config->systemKeys[i] = systemKeys[i];
+    for (int i = 0; i < COIN_KEYS; i++)
+        config->coinKeys[i] = coinKeys[i];
+    for (int i = 0; i < 16; i++)
+        config->playerOneKeys[i] = playerOneKeys[i];
+    for (int i = 0; i < 16; i++)
+        config->playerTwoKeys[i] = playerTwoKeys[i];
+}
 
 void emit(int fd, int type, int code, int val)
 {
@@ -71,7 +84,7 @@ int initInput(JVSConfig *config, JVSCapabilities *sentCapabilities, char *name, 
 
     // Enable system keys
     for (int i = 0; i < 8; i++)
-        ioctl(fd, UI_SET_KEYBIT, systemKeys[i]);
+        ioctl(fd, UI_SET_KEYBIT, config->systemKeys[i]);
 
     // Enable coin keys
     for (int i = 0; i < 2; i++)
@@ -147,7 +160,7 @@ int updateSwitches(JVSConfig *config, unsigned char *switches)
 
     // Emit the system buttons
     for (int i = 0; i < 8; i++)
-        emit(fd, EV_KEY, systemKeys[i], switches[byteCounter] >> (7 - i) & 0x01);
+        emit(fd, EV_KEY, config->systemKeys[i], switches[byteCounter] >> (7 - i) & 0x01);
     byteCounter++;
 
     // First player buttons

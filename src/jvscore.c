@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
     char *configFilePath = "/etc/jvscore.conf";
 
     JVSConfig config = {0};
+    initInputDefaultConfig(&config);
+
     if (!parseConfig(configFilePath, &config))
     {
         printf("Failed to open config file at %s, using default values.\n", configFilePath);
