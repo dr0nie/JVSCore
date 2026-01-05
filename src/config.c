@@ -56,6 +56,7 @@ StrIntMap keysLookUpMap = {.pairs = {
                                {"KEY_RIGHT", KEY_RIGHT},
                                {"KEY_LEFTALT", KEY_LEFTALT},
                                {"KEY_LEFTCTRL", KEY_LEFTCTRL},
+                               {"KEY_ESC", KEY_ESC},
                                {"KEY_ENTER", KEY_ENTER},
                                {"KEY_SPACE", KEY_SPACE},
                                {"KEY_0", KEY_0},
