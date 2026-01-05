@@ -14,6 +14,20 @@
 
 #include "jvs.h"
 void initInputDefaultConfig(JVSConfig *config);
+#include <linux/input-event-codes.h>
+static StrIntMap keysLookUpMap = {.pairs = {
+                                      {"KEY_UP", KEY_UP},
+                                      {"KEY_DOWN", KEY_DOWN},
+                                      {"KEY_LEFT", KEY_LEFT},
+                                      {"KEY_RIGHT", KEY_RIGHT},
+                                      {"KEY_LEFTALT", KEY_LEFTALT},
+                                      {"KEY_LEFTCTRL", KEY_LEFTCTRL},
+                                      {"KEY_ESC", KEY_ESC},
+                                      {"KEY_ENTER", KEY_ENTER},
+                                      {"KEY_SPACE", KEY_SPACE},
+                                      {"KEY_0", KEY_0},
+                                      {"KEY_1", KEY_1},
+                                      {"KEY_5", KEY_5}}};
 
 int initInput(JVSConfig *config, JVSCapabilities *sentCapabilities, char *name, int analogueFuzz);
 int closeInput();
