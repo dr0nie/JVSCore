@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
         capabilities.analogueInBits = 0;
     }
 
-    if (!initInput(&capabilities, name, config.analogueFuzz))
+    if (!initInput(&config, &capabilities, name, config.analogueFuzz))
     {
         printf("Failed to initalise inputs\n");
         return EXIT_FAILURE;
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
             {
                 if (coins[i] > 0)
                 {
-                    emitCoinPress(i);
+                    emitCoinPress(&config, i);
                     decreaseCoins(coins[i], (unsigned char)i + 1);
                 }
             }
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
         /* Update the switches */
         if (capabilities.switches > 0)
         {
-            updateSwitches(switches);
+            updateSwitches(&config, switches);
         }
 
         /* Update the analogue channels */

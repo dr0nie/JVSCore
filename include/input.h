@@ -14,11 +14,11 @@
 
 #include "jvs.h"
 
-int initInput(JVSCapabilities *sentCapabilities, char *name, int analogueFuzz);
+int initInput(JVSConfig *config, JVSCapabilities *sentCapabilities, char *name, int analogueFuzz);
 int closeInput();
-int updateSwitches(unsigned char *switches);
+int updateSwitches(JVSConfig *config, unsigned char *switches);
 int updateAnalogues(int *analogues);
 int sendUpdate();
-int emitCoinPress(unsigned char slot);
+int emitCoinPress(JVSConfig *config, unsigned char slot);
 
 #endif // INPUT_H_

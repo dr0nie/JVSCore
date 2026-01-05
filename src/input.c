@@ -31,9 +31,9 @@ struct uinput_user_dev usetup;
 
 /* Mappings for the key presses */
 int systemKeys[] = {KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2, KEY_F2};
-int coinKeys[] = {KEY_5, KEY_6, KEY_6};
-int playerOneKeys[] = {KEY_1, KEY_9, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFTCTRL, KEY_LEFTALT, KEY_SPACE, KEY_LEFTSHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_V, KEY_V};
-int playerTwoKeys[] = {KEY_2, KEY_9, KEY_R, KEY_F, KEY_D, KEY_G, KEY_A, KEY_S, KEY_Q, KEY_W, KEY_I, KEY_K, KEY_J, KEY_L, KEY_L, KEY_L};
+// int coinKeys[] = {KEY_5, KEY_6, KEY_6};
+// int playerOneKeys[] = {KEY_1, KEY_9, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFTCTRL, KEY_LEFTALT, KEY_SPACE, KEY_LEFTSHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_V, KEY_V};
+// int playerTwoKeys[] = {KEY_2, KEY_9, KEY_R, KEY_F, KEY_D, KEY_G, KEY_A, KEY_S, KEY_Q, KEY_W, KEY_I, KEY_K, KEY_J, KEY_L, KEY_L, KEY_L};
 
 void emit(int fd, int type, int code, int val)
 {
@@ -51,15 +51,15 @@ void emit(int fd, int type, int code, int val)
 
 /**
  * Create a new input device
- * 
+ *
  * Creates a new input device from the JVSCapabilities string that is sent.
  * Currently only creates switches coins and analogues.
- * 
+ *
  * @param sendCapabilities The capabilities object to create the device from
  * @param name The name to give the input device in linux
  * @param analogueFuzz The amount that the analogue channel must differ by before a report is sent.
  */
-int initInput(JVSCapabilities *sentCapabilities, char *name, int analogueFuzz)
+int initInput(JVSConfig *config, JVSCapabilities *sentCapabilities, char *name, int analogueFuzz)
 {
     capabilities = sentCapabilities;
     div_t switchDiv = div(capabilities->switches, 8);
@@ -75,17 +75,17 @@ int initInput(JVSCapabilities *sentCapabilities, char *name, int analogueFuzz)
 
     // Enable coin keys
     for (int i = 0; i < 2; i++)
-        ioctl(fd, UI_SET_KEYBIT, coinKeys[i]);
+        ioctl(fd, UI_SET_KEYBIT, config->coinKeys[i]);
 
     // Enable player one keys
     for (int i = 0; i < 16; i++)
-        ioctl(fd, UI_SET_KEYBIT, playerOneKeys[i]);
+        ioctl(fd, UI_SET_KEYBIT, config->playerOneKeys[i]);
 
     // Enable player two keys
     if (capabilities->players > 1)
     {
         for (int i = 0; i < 16; i++)
-            ioctl(fd, UI_SET_KEYBIT, playerTwoKeys[i]);
+            ioctl(fd, UI_SET_KEYBIT, config->playerTwoKeys[i]);
     }
 
     // Enable analogue channels
@@ -124,7 +124,7 @@ int initInput(JVSCapabilities *sentCapabilities, char *name, int analogueFuzz)
 
 /**
  * Close the input device
- * 
+ *
  * Closes the input device to linux
  */
 int closeInput()
@@ -135,13 +135,13 @@ int closeInput()
 
 /**
  * Sends an update of the switches to linux
- * 
+ *
  * Given a raw bit array taken straight from the JVS IO, this function
  * will loop through all bits and send appropriate key presses
- * 
+ *
  * @param switches The raw bit array containing switch values
  */
-int updateSwitches(unsigned char *switches)
+int updateSwitches(JVSConfig *config, unsigned char *switches)
 {
     int byteCounter = 0;
 
@@ -152,13 +152,13 @@ int updateSwitches(unsigned char *switches)
 
     // First player buttons
     for (int i = 0; i < 8; i++)
-        emit(fd, EV_KEY, playerOneKeys[i], switches[byteCounter] >> (7 - i) & 0x01);
+        emit(fd, EV_KEY, config->playerOneKeys[i], switches[byteCounter] >> (7 - i) & 0x01);
     byteCounter++;
 
     if (switchBytes > 1)
     {
         for (int i = 0; i < 8; i++)
-            emit(fd, EV_KEY, playerOneKeys[8 + i], switches[byteCounter] >> (7 - i) & 0x01);
+            emit(fd, EV_KEY, config->playerOneKeys[8 + i], switches[byteCounter] >> (7 - i) & 0x01);
         byteCounter++;
     }
 
@@ -168,13 +168,13 @@ int updateSwitches(unsigned char *switches)
 
     // Second player buttons
     for (int i = 0; i < 8; i++)
-        emit(fd, EV_KEY, playerTwoKeys[i], switches[byteCounter] >> (7 - i) & 0x01);
+        emit(fd, EV_KEY, config->playerTwoKeys[i], switches[byteCounter] >> (7 - i) & 0x01);
     byteCounter++;
 
     if (switchBytes > 1)
     {
         for (int i = 0; i < 8; i++)
-            emit(fd, EV_KEY, playerTwoKeys[8 + i], switches[byteCounter] >> (7 - i) & 0x01);
+            emit(fd, EV_KEY, config->playerTwoKeys[8 + i], switches[byteCounter] >> (7 - i) & 0x01);
         byteCounter++;
     }
 
@@ -183,10 +183,10 @@ int updateSwitches(unsigned char *switches)
 
 /**
  * Sends an update of the analogues to linux
- * 
+ *
  * Given a raw analogue array taken straight from the JVS IO, this function
  * will loop through all bytes and send appropriate analogue updates
- * 
+ *
  * @param switches The raw byte array containing analogue values
  */
 int updateAnalogues(int *analogues)
@@ -201,25 +201,25 @@ int updateAnalogues(int *analogues)
 
 /**
  * Emit a coin press
- * 
+ *
  * Given a slot this will emit a key press
  * used for when JVSCore detects a coin
- * 
+ *
  * @param slot Which slot the coin was inserted into
  */
-int emitCoinPress(unsigned char slot)
+int emitCoinPress(JVSConfig *config, unsigned char slot)
 {
-    emit(fd, EV_KEY, coinKeys[slot], 1);
+    emit(fd, EV_KEY, config->coinKeys[slot], 1);
     sendUpdate();
     usleep(100 * 1000);
-    emit(fd, EV_KEY, coinKeys[slot], 0);
+    emit(fd, EV_KEY, config->coinKeys[slot], 0);
     sendUpdate();
     return 1;
 }
 
 /**
  * Report the input device update
- * 
+ *
  * This is called once every turn to send linux all
  * of the switch and analogue updates in one go
  */

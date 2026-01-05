@@ -14,11 +14,29 @@
 #include <string.h>
 #include <stdlib.h>
 
+typedef struct
+{
+    char key[64];
+    int value;
+} StrIntPair;
+
+typedef struct
+{
+    StrIntPair pairs[32];
+} StrIntMap;
+
+int get_value(StrIntMap *map, char *key);
+
 typedef struct JVSConfig
 {
     char devicePath[MAX_STRING_LENGTH];
     int analogueFuzz;
     int enableAnalogue;
+
+    int playerOneKeys[16];
+    int playerTwoKeys[16];
+    int coinKeys[3];
+
 } JVSConfig;
 
 int parseConfig(char *filePath, JVSConfig *jvsConfig);
